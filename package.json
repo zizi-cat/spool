@@ -1,0 +1,35 @@
+{
+  "name": "spool-cli",
+  "version": "0.1.0",
+  "description": "🧵 Threads CLI - Post, read, and search on Meta's Threads",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "spool": "./bin/spool.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "start": "node bin/spool.js"
+  },
+  "keywords": [
+    "threads",
+    "meta",
+    "cli",
+    "social-media"
+  ],
+  "author": "zizi <zizicat.ai@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zizi-cat/spool.git"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "conf": "^13.1.0",
+    "open": "^10.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
