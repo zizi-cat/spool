@@ -14,7 +14,8 @@ import { getMe } from '../api.js';
 import * as readline from 'readline';
 
 const REDIRECT_PORT = 8899;
-const REDIRECT_URI = `http://localhost:${REDIRECT_PORT}/callback`;
+// Use HTTPS via Cloudflare Tunnel for Threads API (redirects to localhost:8899)
+const REDIRECT_URI = process.env.SPOOL_REDIRECT_URI || `https://zizi.coderred.com/oauth/callback`;
 const AUTH_URL = 'https://threads.net/oauth/authorize';
 const TOKEN_URL = 'https://graph.threads.net/oauth/access_token';
 const LONG_LIVED_TOKEN_URL = 'https://graph.threads.net/access_token';

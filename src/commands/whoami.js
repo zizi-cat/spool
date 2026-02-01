@@ -1,28 +1,28 @@
 import chalk from 'chalk';
-import { isAuthenticated, getUser } from '../config.js';
-import { getMe } from '../api.js';
+import { isLoggedIn, getProfile, disconnect } from '../browser.js';
 
 export async function whoami() {
-  if (!isAuthenticated()) {
-    console.log(chalk.red('Not logged in. Run: spool login'));
-    process.exit(1);
-  }
-
   try {
-    const me = await getMe();
+    const loggedIn = await isLoggedIn();
     
-    console.log(chalk.cyan('\n🧵 Your Threads Profile\n'));
-    console.log(`${chalk.bold('Username:')} @${me.username}`);
-    console.log(`${chalk.bold('Name:')}     ${me.name || chalk.dim('(not set)')}`);
-    console.log(`${chalk.bold('ID:')}       ${me.id}`);
-    
-    if (me.threads_biography) {
-      console.log(`${chalk.bold('Bio:')}      ${me.threads_biography}`);
+    if (!loggedIn) {
+      console.log(chalk.red('Not logged in to Threads.'));
+      console.log(chalk.gray('Login to threads.com in your browser first.'));
+      process.exit(1);
     }
     
-    console.log('');
-  } catch (error) {
-    console.log(chalk.red(`Error: ${error.message}`));
+    const profile = await getProfile();
+    
+    if (profile?.username) {
+      console.log(chalk.green(`✓ Logged in as @${profile.username}`));
+      console.log(chalk.gray(`User ID: ${profile.id}`));
+    } else {
+      console.log(chalk.yellow('Logged in but could not get profile info.'));
+    }
+  } catch (e) {
+    console.log(chalk.red(`Error: ${e.message}`));
     process.exit(1);
+  } finally {
+    await disconnect();
   }
 }

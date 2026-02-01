@@ -1,47 +1,32 @@
 import chalk from 'chalk';
-import { isAuthenticated } from '../config.js';
-import { createTextPost, createImagePost, getPost } from '../api.js';
+import { post as browserPost, isLoggedIn, disconnect } from '../browser.js';
 
 export async function post(text, options) {
-  if (!isAuthenticated()) {
-    console.log(chalk.red('Not logged in. Run: spool login'));
+  if (!text) {
+    console.log(chalk.red('Post text is required.'));
     process.exit(1);
   }
-
-  if (!text || text.trim().length === 0) {
-    console.log(chalk.red('Text is required.'));
-    process.exit(1);
-  }
-
-  if (text.length > 500) {
-    console.log(chalk.red(`Text too long: ${text.length}/500 characters`));
-    process.exit(1);
-  }
-
+  
   try {
-    console.log(chalk.gray('Creating thread...'));
+    const loggedIn = await isLoggedIn();
     
-    let result;
-    if (options.image) {
-      result = await createImagePost(text, options.image);
-    } else {
-      result = await createTextPost(text);
+    if (!loggedIn) {
+      console.log(chalk.red('Not logged in to Threads.'));
+      console.log(chalk.gray('Login to threads.com in your browser first.'));
+      process.exit(1);
     }
     
-    // Fetch the created post to get permalink
-    const created = await getPost(result.id);
+    console.log(chalk.gray('Posting to Threads...'));
     
-    console.log(chalk.green('\n✓ Thread posted!'));
-    console.log(chalk.dim(`ID: ${result.id}`));
+    const result = await browserPost(text);
     
-    if (created.permalink) {
-      console.log(chalk.cyan(`\n${created.permalink}`));
+    if (result.success) {
+      console.log(chalk.green('✓ Posted successfully!'));
     }
-  } catch (error) {
-    console.log(chalk.red(`Error: ${error.message}`));
-    if (error.response) {
-      console.log(chalk.dim(JSON.stringify(error.response, null, 2)));
-    }
+  } catch (e) {
+    console.log(chalk.red(`Error: ${e.message}`));
     process.exit(1);
+  } finally {
+    await disconnect();
   }
 }

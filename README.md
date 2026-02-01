@@ -1,90 +1,76 @@
 # 🧵 spool
 
-A CLI for Meta's Threads. Post, read, and search from your terminal.
+Threads CLI - Post to Meta's Threads from the terminal.
 
-## Installation
+Perfect for AI agents and automation!
+
+## Install
 
 ```bash
 npm install -g spool-cli
 ```
 
-Or run directly:
-```bash
-npx spool-cli
-```
+Requires Chromium/Chrome installed on your system.
 
 ## Setup
 
-1. Create a Meta app at [developers.facebook.com](https://developers.facebook.com/apps/)
-2. Add the Threads API product
-3. Configure OAuth redirect URI: `http://localhost:8899/callback`
-4. Run `spool login` and enter your Client ID and Secret
+### 1. Export cookies from your browser
+
+First, login to threads.com in your browser, then export cookies:
+
+```bash
+# Start Chromium with remote debugging
+chromium --remote-debugging-port=9222
+
+# In another terminal, after logging into threads.com:
+spool login --export
+```
+
+### 2. Or manually set cookies
+
+```bash
+# Open cookie file location
+spool login --path
+
+# Paste your cookies in JSON format (get from browser devtools)
+```
 
 ## Usage
 
 ```bash
-# Authenticate
-spool login
-
-# Check your profile
+# Check login status
 spool whoami
 
-# Post a thread
+# Post to Threads
 spool post "Hello from the terminal! 🧵"
 
-# Post with image
-spool post "Check this out!" --image https://example.com/image.jpg
-
-# Reply to a thread
-spool reply <post-id-or-url> "Great thread!"
-
-# Read a thread
-spool read <post-id-or-url>
-
-# List your recent posts
-spool posts
-spool posts -n 20
-
-# Search
-spool search "AI"
-spool search "#coding" --tag
+# Post with confirmation
+spool post "Important post" --confirm
 ```
 
-## Commands
+## For AI Agents
 
-| Command | Alias | Description |
-|---------|-------|-------------|
-| `login` | | Authenticate with Threads |
-| `logout` | | Remove stored credentials |
-| `whoami` | `me` | Show your profile |
-| `post <text>` | `tweet` | Create a new thread |
-| `reply <id> <text>` | | Reply to a thread |
-| `read <id>` | | Read a thread |
-| `posts` | `feed` | List your recent posts |
-| `search <query>` | | Search threads |
+spool is designed for AI agents that want to post to Threads:
 
-## Environment Variables
-
-You can also set credentials via environment:
-
-```bash
-export THREADS_CLIENT_ID="your-client-id"
-export THREADS_CLIENT_SECRET="your-client-secret"
+```javascript
+// From your agent
+exec('spool post "Hello from AI! 🤖"')
 ```
 
-## Required Scopes
+Cookie location: `~/.config/spool-cli/cookies.json`
 
-The following scopes are requested during login:
-- `threads_basic` - Basic profile access
-- `threads_content_publish` - Create posts
-- `threads_manage_replies` - Manage replies
-- `threads_read_replies` - Read replies
-- `threads_manage_insights` - Access analytics
+## Requirements
+
+- Node.js 18+
+- Chromium or Chrome (for headless browser)
+- Threads account
+
+## How it works
+
+1. Uses saved browser cookies for authentication
+2. Runs headless Chromium to interact with Threads
+3. No Meta app registration required!
 
 ## License
 
 MIT
-
-## Author
-
-Made with 🐾 by [zizi](https://github.com/zizi-cat)
